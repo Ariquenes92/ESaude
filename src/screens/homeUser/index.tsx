@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import { Button} from 'react-native-elements';
-import { useNavigation, useRoute } from '@react-navigation/core';
+import { useNavigation, useRoute, DrawerActions } from '@react-navigation/core';
+import { Toolbar } from '../../components/toolbar';
 
 export default function HomeUserScreen (props: any) {
     
@@ -9,7 +10,8 @@ export default function HomeUserScreen (props: any) {
     const route = useRoute()
     
     const config = () =>{
-
+        console.log('teste');
+        nav.dispatch(DrawerActions.toggleDrawer)
     }
 
     const menu = () =>{
@@ -29,6 +31,7 @@ export default function HomeUserScreen (props: any) {
       <View style={{flex:1}}>
 
         {/* CABEÇALHO */}
+        <Toolbar titulo="Perfil" menu config/>
         <View style={styles.header}>
             <Text style={{color:'white', fontSize:10, marginTop:5, marginRight:70,}}> {route.params?.user} Usuário </Text>
             <View style={{flexDirection: 'row'}}>

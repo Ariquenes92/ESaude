@@ -21,9 +21,10 @@ export default function LoginScreen(props: LoginProps) {
     
     //Função para Logar
     const logar = async ({user, senha} : any) =>{
+        console.log ('Entrou');
         if (user == 'user' && senha == '123456'){
             console.log ('Login realizado com sucesso');
-            nav.navigate('homeUser', {user: user})
+            nav.navigate('app', {user: user})
         } if (user == 'doctor' && senha == '123456'){
             console.log ('Login realizado com sucesso');
             nav.navigate('homeDoctor', {user: user})
