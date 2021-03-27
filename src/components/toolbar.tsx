@@ -1,14 +1,13 @@
 import * as React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { Header } from 'react-native-elements';
 import { MaterialIcons} from '@expo/vector-icons'
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import { DrawerActions, useNavigation } from '@react-navigation/core';
+import { DrawerActions, useNavigation } from '@react-navigation/native';
 
 export interface ToolbarProps {
     titulo:string;
     menu?:boolean;
-    config?:boolean;
+    back?:boolean;
 }
 
 export function Toolbar (props: ToolbarProps) {
@@ -17,17 +16,17 @@ export function Toolbar (props: ToolbarProps) {
 
     const nav= useNavigation();
 
-    if (props.menu)
+    if (props.back)
         leftComponent = (
-            <TouchableOpacity onPress ={() =>  console.log('teste')}>
-                <MaterialIcons name="menu" color ="white" size={20}/>
+            <TouchableOpacity onPress ={() =>  nav.goBack()}>
+                <MaterialIcons name="keyboard-backspace" color ="white" size={20}/>
             </TouchableOpacity>
             )
      
-    if (props.config)
+    if (props.menu)
         rightComponent = (
             <TouchableOpacity onPress ={() => nav.dispatch(DrawerActions.toggleDrawer())}>
-                <MaterialIcons name="settings" color ="white" size={20}/>
+                <MaterialIcons name="menu" color ="white" size={20}/>
             </TouchableOpacity>
             )
     

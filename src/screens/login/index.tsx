@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, StyleSheet, Text, ActivityIndicator} from 'react-native';
-import { Button, Input } from 'react-native-elements';
+import { Button } from 'react-native-elements';
 import { InputRound } from './components';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import { useNavigation } from '@react-navigation/core';
-import { boolean } from 'yup/lib/locale';
+import { useNavigation } from '@react-navigation/native';
 
 export interface LoginProps {}
 

@@ -12,11 +12,11 @@ const Stack = createStackNavigator();
 export const MainNavigation = () =>(
     <NavigationContainer>
         <Stack.Navigator screenOptions={{headerShown:false}}>
-            <Stack.Screen name="app" component={DrawerMenu}  />
-            <Stack.Screen name="loginStart" component={LoginStartScreen}   />
-            <Stack.Screen name="login" component={LoginScreen}   />
-            <Stack.Screen name="cadastroPaciente" component={CadastroPacienteScreen}   />
-            <Stack.Screen name="homeDoctor" component={HomeDoctorScreen}  />
+            <Stack.Screen name="app" component={DrawerMenu}/>
+            <Stack.Screen name="loginStart" component={LoginStartScreen}/>
+            <Stack.Screen name="login" component={LoginScreen}/>
+            <Stack.Screen name="cadastroPaciente" component={CadastroPacienteScreen}/>
+            <Stack.Screen name="homeDoctor" component={HomeDoctorScreen}/>
         </Stack.Navigator>
     </NavigationContainer>
 )

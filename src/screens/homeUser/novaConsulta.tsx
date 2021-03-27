@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useNavigation, useRoute} from '@react-navigation/native';
 import { Toolbar} from '../../components/toolbar';
 
-export default function HomeUserScreen (props:any){
+export default function NovaConsultaScreen (props:any){
 
     const nav = useNavigation()
     const route = useRoute()
@@ -12,7 +12,7 @@ export default function HomeUserScreen (props:any){
         
     }
 
-    return (
+    return  (
         <View style={{flex:1}}>
             {/* CABEÇALHO*/}
             <Toolbar titulo="Perfil" menu/>
@@ -35,7 +35,7 @@ export default function HomeUserScreen (props:any){
             <View style={styles.mid}>
                 <View style={styles.boxMid}>
                     <View style={{justifyContent:'center', alignItems: 'center',}}>
-                        <Text style={{fontSize:20, fontWeight:'bold',}}>Suas Consultas</Text>
+                        <Text style={{fontSize:20, fontWeight:'bold',}}>Buscar nova Consulta</Text>
                     </View>
 
                     <View style={styles.headBox}>
