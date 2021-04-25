@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { useNavigation, useRoute} from '@react-navigation/native';
 import { Toolbar} from '../../components/toolbar';
 
@@ -8,28 +8,10 @@ export default function NovaConsultaScreen (props:any){
     const nav = useNavigation()
     const route = useRoute()
 
-    const photo = () =>{
-        
-    }
-
     return  (
         <View style={{flex:1}}>
             {/* CABEÇALHO*/}
-            <Toolbar titulo="Perfil" menu/>
-
-            {/* PERFIL */}
-            <View style={styles.perfil}>
-                <View style={{flexDirection:'row', marginRight: 20,}}>
-                    <TouchableOpacity 
-                        onPress = {() => photo()}>
-                        <Image
-                            source ={require('./user.png')}
-                            style={{witdth:30, height:30}}
-                        />
-                    </TouchableOpacity>
-                    <Text style={{color:'black', fontSize:15, marginTop:5,}}> Nome </Text>
-                </View>
-            </View>
+            <Toolbar titulo="Perfil" menu perfil/>
 
             {/*MEIO*/}
             <View style={styles.mid}>
@@ -72,14 +54,6 @@ export default function NovaConsultaScreen (props:any){
 }
 
 const styles = StyleSheet.create({
-    perfil:{
-        flex:1,
-        padding: 10,
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor:'white',
-    },
     mid:{
         flex: 8,
         padding: 10,

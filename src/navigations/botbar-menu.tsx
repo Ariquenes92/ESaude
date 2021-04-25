@@ -4,18 +4,18 @@ import HomeUserScreen from '../screens/homeUser';
 import HistoricoScreen from '../screens/homeUser/historicoConsulta';
 import NovaConsultaScreen from '../screens/homeUser/novaConsulta';
 
-const Top = createBottomTabNavigator();
+const Bot = createBottomTabNavigator();
 
 export const BotMenuNavegator = () =>(
-    <Top.Navigator
+    <Bot.Navigator
         tabBarOptions={{
             activeBackgroundColor:'#ADD8E6',
             inactiveBackgroundColor:'white',
             inactiveTintColor:'black',
         }}
     >
-        <Top.Screen name="Suas Consultas" component={HomeUserScreen}/>
-        <Top.Screen name="Buscar nova Consulta" component={NovaConsultaScreen}/>
-        <Top.Screen name="Histórico de Consultas" component={HistoricoScreen}/>
-    </Top.Navigator>
+        <Bot.Screen name="Suas Consultas" component={HomeUserScreen}/>
+        <Bot.Screen name="Buscar nova Consulta" component={NovaConsultaScreen}/>
+        <Bot.Screen name="Histórico de Consultas" component={HistoricoScreen}/>
+    </Bot.Navigator>
 )

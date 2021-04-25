@@ -1,35 +1,24 @@
 import * as React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, FlatList } from 'react-native';
 import { useNavigation, useRoute} from '@react-navigation/native';
 import { Toolbar} from '../../components/toolbar';
+import { ItemConsulta} from './components';
+import Consulta from '../../models/consulta';
 
 export default function HomeUserScreen (props:any){
 
-    const nav = useNavigation()
-    const route = useRoute()
+    const nav = useNavigation();
+    const route = useRoute();
 
-    const photo = () =>{
-        
-    }
+    const [ consultas, setConsultas ] = React.useState([
+        new Consulta ("Dr.João", "Cardiologista", "20/05/2021"),
+        new Consulta ("Dra.Laura", "Nutricionista", "30/08/2021"),
+    ])
 
     return (
         <View style={{flex:1}}>
             {/* CABEÇALHO*/}
-            <Toolbar titulo="Perfil" menu/>
-
-            {/* PERFIL */}
-            <View style={styles.perfil}>
-                <View style={{flexDirection:'row', marginRight: 20,}}>
-                    <TouchableOpacity 
-                        onPress = {() => photo()}>
-                        <Image
-                            source ={require('./user.png')}
-                            style={{witdth:30, height:30}}
-                        />
-                    </TouchableOpacity>
-                    <Text style={{color:'black', fontSize:15, marginTop:5,}}> Nome </Text>
-                </View>
-            </View>
+            <Toolbar titulo="Perfil" menu perfil/>
 
             {/*MEIO*/}
             <View style={styles.mid}>
@@ -39,30 +28,21 @@ export default function HomeUserScreen (props:any){
                     </View>
 
                     <View style={styles.headBox}>
-                        <Text style={styles.lineOne}> Médico </Text>
-                        <Text style={styles.lineTwo}> Especialidade </Text>
-                        <Text style={styles.lineThree}> Data </Text>
+                        <Text style={styles.line}> Médico </Text>
+                        <Text style={styles.line}> Especialidade </Text>
+                        <Text style={styles.line}> Data </Text>
                     </View>
-                    <View style={styles.insideBox}>
-                        <Text style={styles.lineOne}> Dr.João </Text>
-                        <Text style={styles.lineTwo}> Cardiologista </Text>
-                        <Text style={styles.lineThree}> 20/05/2021 </Text>
-                    </View>
-                    <View style={styles.insideBox2}>
-                        <Text style={styles.lineOne}> Dra.Laura </Text>
-                        <Text style={styles.lineTwo}> Nutricionista </Text>
-                        <Text style={styles.lineThree}> 12/06/2021 </Text>
-                    </View>
-                    <View style={styles.insideBox}>
-                        <Text style={styles.lineOne}> Dr.João </Text>
-                        <Text style={styles.lineTwo}> Cardiologista </Text>
-                        <Text style={styles.lineThree}> 25/07/2021 </Text>
-                    </View>
-                    <View style={styles.insideBox2}>
-                        <Text style={styles.lineOne}> Dra.Laura </Text>
-                        <Text style={styles.lineTwo}> Nutricionista </Text>
-                        <Text style={styles.lineThree}> 12/09/2021 </Text>
-                    </View>
+                    
+                    <FlatList
+                        data={consultas}
+                        renderItem={({item}) => (
+                            <ItemConsulta
+                                consulta={item}
+                                onEditar={(consulta) => console.log(consulta)}
+                                onExcluir={(id) => console.log(id)}
+                            />
+                        )}
+                    />
 
                 </View>
             </View>
@@ -72,14 +52,6 @@ export default function HomeUserScreen (props:any){
 }
 
 const styles = StyleSheet.create({
-    perfil:{
-        flex:1,
-        padding: 10,
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor:'white',
-    },
     mid:{
         flex: 8,
         padding: 10,
@@ -101,27 +73,7 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
         backgroundColor:'white',
     },
-    insideBox:{
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'stretch',
-        backgroundColor:'#ADD8E6',
-    },
-    insideBox2:{
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'stretch',
-        backgroundColor:'#B0C4DE',
-    },
-    lineOne:{
+    line:{
         fontSize:15,
     },
-    
-    lineTwo:{
-        fontSize:15,
-    },
-    
-    lineThree:{
-        fontSize:15,
-    }
 })
