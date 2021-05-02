@@ -11,3 +11,5 @@ export function ConfigInfoScreen (props: ConfigInfoScreenProps) {
       </View>
     );
 }
+
+

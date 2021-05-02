@@ -9,7 +9,7 @@ export default function HomeDoctorScreen (props: any) {
     
     return (
       <View>
-        <Text>Tela da Home</Text>
+        <Text style={{fontSize:30, alignSelf:'center'}}> EM MANUNTEÇÃO</Text>
       </View>
     );
 }

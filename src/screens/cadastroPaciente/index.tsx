@@ -103,17 +103,16 @@ export default function CadastroPacienteScreen(props: CadastroInputProps) {
 
                                 {isSubmitting && <ActivityIndicator size="large"/> }
                                 <View style={{alignItems: 'center', flexDirection:'row'}}>
-                                {!isSubmitting &&   
-                                                <Button title="Cadastrar" buttonStyle={{height:20, backgroundColor: 'green'}} titleStyle={{color:'white', fontSize:15}}
-                                                        containerStyle={{width:100, marginTop:10, marginRight: 20}} 
-                                                        raised={true} type="outline"
-                                                        onPress={() => handleSubmit()} />
-                                                }
-                                                <Button title="Voltar" buttonStyle={{height:20, backgroundColor: 'red'}}
-                                                containerStyle={{width:100, marginTop:10}} titleStyle={{color:'white', fontSize:15}}
-                                                raised={true} type="outline" 
-                                                onPress={() => voltar()} />
-                                                </View>
+                                    {!isSubmitting && <Button title="Cadastrar" buttonStyle={{height:20, backgroundColor: 'green'}} 
+                                        titleStyle={{color:'white', fontSize:15}} containerStyle={{width:100, marginTop:10, marginRight: 20}} 
+                                        raised={true} type="outline" onPress={() => handleSubmit()} />
+                                    }
+                                    <Button title="Voltar" buttonStyle={{height:20, backgroundColor: 'red'}}
+                                        containerStyle={{width:100, marginTop:10}} titleStyle={{color:'white', fontSize:15}}
+                                        raised={true} type="outline" 
+                                        onPress={() => voltar()} 
+                                    />
+                                </View>
                             </View>
                         )}
                     </Formik>

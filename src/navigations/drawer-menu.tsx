@@ -23,7 +23,7 @@ export const DrawerMenu = () => (
         <Drawer.Screen 
             name = "infoAdd" component ={PageInformationAdd} 
             options ={{ drawerLabel:'Informações Adicionais', 
-                        drawerIcon: () => <MaterialIcons name="settings" size ={20}/>}}
+                        drawerIcon: () => <MaterialIcons name="format-list-bulleted" size ={20}/>}}
         />
         <Drawer.Screen 
             name = "loginStart" component ={LoginStartScreen} 
