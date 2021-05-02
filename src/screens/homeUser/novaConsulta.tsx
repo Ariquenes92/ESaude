@@ -5,6 +5,7 @@ import { Toolbar} from '../../components/toolbar';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Button } from 'react-native-elements';
 import { Formik } from 'formik';
+import * as Yup from 'yup';
 import { TextInputMask } from 'react-native-masked-text';
 
 export interface NovaConsulta {
@@ -25,12 +26,10 @@ export default function NovaConsultaScreen (props:any){
 
     const consulta : NovaConsulta = {};
 
-    var cardiologista, nutricionista;
-
     const [ valueE, setValueE ] = useState(null);
-
+    
     const [ especialidade, setEspecialidade ] = useState([
-        {label: 'Especialidade', value: '0'},
+        {label: 'Especialidade', value: '0', selected: true},
         {label: 'Cardiologista', value: '1'},
         {label: 'Nutricionista', value: '2'},
     ])
@@ -53,18 +52,20 @@ export default function NovaConsultaScreen (props:any){
         {label: 'Médico', value: '0'}
     ])
 
-    if (valueE ==  1){
-        cardiologista = true;
-        nutricionista = false;
-    } else if (valueE == 2) {
-        cardiologista = false;
-        nutricionista = true;
-    } else{
-        cardiologista = false;
-        nutricionista = false;
-    }
+    const [ valueH, setValueH ] = useState(null);
+
+    const [ hora, setHora ] = useState([
+        {label: 'Horário', value: '0'},
+        {label: '8:00', value: '1'},
+        {label: '9:00', value: '2'},
+        {label: '10:00', value: '3'},
+        {label: '11:00', value: '4'},
+    ])
 
     const controller = useRef(null);
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0)
 
     return  (
         <View style={{flex:1}}>
@@ -81,14 +82,16 @@ export default function NovaConsultaScreen (props:any){
                     //Dados iniciais 
                     initialValues={consulta}
                     // Validação de formulário
-                    
+                    validationSchema={Yup.object().shape({
+                        data: Yup.date().required('Informe uma data válida').min(today, 'A data não pode ser no passado'),
+                    })}
                     //Envio
                     onSubmit={confirm}
                 >
                  {({errors, handleBlur, handleChange, handleSubmit, touched, isSubmitting, values}) => (
                     <View style={{flex:1}}>
                         {/*ESPECIALIDADE*/}
-                        <View style={{alignSelf:'center'}}>
+                        <View style={{alignSelf:'center', marginBottom: 5,}}>
                         <DropDownPicker
                             
                             items={especialidade}
@@ -107,13 +110,12 @@ export default function NovaConsultaScreen (props:any){
                             controller={instance => controller.current = instance}
                             defaultValue={valueE}
                             onChangeItem={item => setValueE(item.value)}
-                            value={values.especialidade}
                             />
                         </View>
 
                         {/*MÉDICO*/}
-                        <View style={{alignSelf:'center', zIndex: -2}}>
-                            {cardiologista &&
+                        <View style={{alignSelf:'center', zIndex: -2, marginBottom: 5,}}>
+                            {(valueE ==  1) &&
                                 <DropDownPicker
                                     items={medico1}
                                     
@@ -131,10 +133,9 @@ export default function NovaConsultaScreen (props:any){
                                     controller={instance => controller.current = instance}
                                     defaultValue={valueM}
                                     onChangeItem={item => setValueM(item.value)}
-                                    value={values.medico}
                                 />
                             }
-                            {nutricionista &&
+                            {(valueE == 2) &&
                                 <DropDownPicker
                                     items={medico2}
                                     
@@ -152,10 +153,9 @@ export default function NovaConsultaScreen (props:any){
                                     controller={instance => controller.current = instance}
                                     defaultValue={valueM}
                                     onChangeItem={item => setValueM(item.value)}
-                                    value={values.medico}
                                 />
                             }
-                            {!nutricionista && !cardiologista &&
+                            {(valueE == null || valueE == 0) &&
                                 <DropDownPicker
                                     items={medico}
                                     
@@ -173,25 +173,41 @@ export default function NovaConsultaScreen (props:any){
                                     controller={instance => controller.current = instance}
                                     defaultValue={valueM}
                                     onChangeItem={item => setValueM(item.value)}
-                                    value={values.medico}
                                 />
                             }
                         </View>
 
                         {/*DATA*/}
-                        <View style={{alignSelf:'center', zIndex: -4}}>
-                            <TextInputMask style={styles.input} placeholder="Data" onBlur={handleBlur('data')} onChangeText={handleChange("data")}
+                        <View style={{alignSelf:'center', zIndex: -4, marginBottom: 5,}}>
+                            <TextInputMask style={styles.input} placeholder="Dia" onBlur={handleBlur('data')} onChangeText={handleChange("data")}
                                 type={'custom'} options={{ mask: '99/99/9999'}} value={values.data} placeholderTextColor='#006F9A'/>
+                                {touched.data && <Text style={styles.erro}>{errors.data}</Text>}
                         </View>
 
                         {/*HORA*/}
-                        <View style={{alignSelf:'center', zIndex: -4}}>
-                            <TextInputMask style={styles.input} placeholder="Horário" onBlur={handleBlur('hora')} onChangeText={handleChange("hora")}
-                                type={'custom'} options={{ mask: '99:99'}} value={values.hora} placeholderTextColor='#006F9A'/>
+                        <View style={{alignSelf:'center', zIndex: -4, marginBottom: 5,}}>
+                            <DropDownPicker
+                                    items={hora}
+                                    
+                                    placeholder = 'Horário'
+                                    containerStyle ={styles.container}
+                                    itemStyle={{ alignSelf: 'center', }}
+                                    dropDownStyle={{backgroundColor: 'white'}}
+                                    labelStyle={{color: '#006F9A', alignSelf:'center'}}
+                                    selectedLabelStyle={{color: '#006F9A'}}
+                                    
+                                    onChangeList={(hora, callback) => {
+                                        Promise.resolve(setHora(hora))
+                                        .then(() => callback());
+                                    }}
+                                    controller={instance => controller.current = instance}
+                                    defaultValue={valueH}
+                                    onChangeItem={item => setValueH(item.value)}
+                                />
                         </View>
 
                         {/*Botão*/}
-                        <View style={{alignSelf:'center', zIndex: -4}}>
+                        <View style={{alignSelf:'center', zIndex: -8}}>
                             <Button title="Confirmar" onPress={() => handleSubmit()} buttonStyle={{height:20, backgroundColor: '#006F9A'}}
                                 containerStyle={{width:100, marginTop:10}} titleStyle={{color:'white', fontSize:15}}
                                 raised={true} type="outline" />
@@ -243,5 +259,10 @@ const styles = StyleSheet.create({
     input:{
         color: '#006F9A',
         width: 80,
+    },
+    erro: {
+        color:"red",
+        fontSize: 10,
+        textAlign: "right",
     },
 })
