@@ -65,7 +65,7 @@ export default function PageInformationAdd (props:any){
                         {/* ALTURA */}
                         <View style={styles.textbar}>
                             <TextInputMask style={styles.input} placeholder="Altura" onBlur={handleBlur('altura')} onChangeText={handleChange("altura")}
-                                type={'custom'} value={values.altura} placeholderTextColor='#006F9A' options={{ mask: '9.99',}} />
+                                type={'custom'} value={values.altura} placeholderTextColor='#006F9A' options={{ mask: '999',}} />
                             <Text style={styles.complemento}>cm</Text>
                         </View>
                         {errors.altura && touched.altura && <Text style={styles.erro}>{errors.altura}</Text>} 

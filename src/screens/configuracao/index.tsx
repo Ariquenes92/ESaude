@@ -1,12 +1,10 @@
 import * as React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { Button} from 'react-native-elements';
 import { Formik } from 'formik';
-import * as Yup from 'yup';
-import { useNavigation, useRoute, DrawerActions} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { Toolbar} from '../../components/toolbar';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { TextInputMask } from 'react-native-masked-text';
 
 /** Interface que define os atributos basicos de usuário */
 export interface Config {

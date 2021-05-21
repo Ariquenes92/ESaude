@@ -5,7 +5,8 @@ import { InputRound } from './components';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useNavigation, PrivateValueStore } from '@react-navigation/core';
-import { TextInputMask } from 'react-native-masked-text'
+import firebase from 'firebase';
+import 'firebase/firestore';
 
 export interface CadastroInputProps {}
 
@@ -14,21 +15,37 @@ export default function CadastroPacienteScreen(props: CadastroInputProps) {
     const nav = useNavigation()
     
     // Errors
-    const[ nome, setNome ] = React.useState('')
-    const[ user, setUser ] = React.useState('')
-    const[ senha, setSenha ] = React.useState('')
-    const[ confirmeSenha, setConfirmeSenha ] = React.useState('')
-    const[ nascimento, SetNascimento ] = React.useState('')
-    const[ cpf, SetCpf ] = React.useState('')
-    const[ celular, SetCelular ] = React.useState('')
-    const[ email, SetEmail ] = React.useState('')
+    const[ nome, setNome ] = useState('')
+    const[ senha, setSenha ] = useState('')
+    const[ confirmeSenha, setConfirmeSenha ] = useState('')
+    const[ nascimento, SetNascimento ] = useState('')
+    const[ cpf, SetCpf ] = useState('')
+    const[ celular, SetCelular ] = useState('')
+    const[ email, SetEmail ] = useState('')
 
 
     var falhaCadastrar = false;
 
+    
+
     //Função para Submeter cadastro
-    const cadastrar = (dados) =>{
-        nav.navigate('homeUser', {user: dados.user})
+    const cadastrar = (dados : any) =>{
+        firebase.auth().createUserWithEmailAndPassword(dados.email, dados.senha)
+            .then( () => {
+                const dadosUser = { 
+                    nome: dados.nome,
+                    email: dados.email,
+                    cpf: dados.cpf,
+                    nascimento: dados.nascimento,
+                    celular: dados.celular
+                }
+                firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).set(dadosUser)
+                nav.navigate('app', {usuario: dados.user})
+            })
+            .catch( erro => {
+                falhaCadastrar = true
+            })
+        
     }
 
     const voltar = () =>{
@@ -45,14 +62,13 @@ export default function CadastroPacienteScreen(props: CadastroInputProps) {
                 <View style={{flex:7, alignItems: 'center',}}>
 
                     <Formik
-                        initialValues={{ nome:'', cpf:'', email:'', nascimento:'', celular:'', user:'', senha:'', confirmeSenha:''}}
+                        initialValues={{ nome:'', cpf:'', email:'', nascimento:'', celular:'', senha:'', confirmeSenha:''}}
                         validationSchema={Yup.object().shape({
                             nome: Yup.string().required('Informe o seu Nome'),
                             cpf: Yup.string().required('Informe um CPF válido').min(14,'CPF são pelo menos 11 dígitos'),
                             email: Yup.string().required('Informe um Email válido').email('Informe um Email válido'),
                             nascimento: Yup.date().required('Informe uma data válida'),
                             celular: Yup.string().min(11,'Informe o DDD e os 9 dígitos'),
-                            user: Yup.string().required('Informe o usuario'),
                             senha: Yup.string().required('Informe a senha').min(6, 'A senha precisa ter 6 caracteres'),
                             confirmeSenha: Yup.string().required('Confirme a senha').oneOf([Yup.ref('senha'), null], "A senha não coincide"),
                         })}
@@ -84,10 +100,6 @@ export default function CadastroPacienteScreen(props: CadastroInputProps) {
                                                     mask={'cel-phone'} value={values.celular} options={{maskType: 'BRL', withDDD: true, dddMask: '(99) '}}
                                                     onBlur={handleBlur('celular')} onChangeText={handleChange("celular")}/>
                                     {touched.celular && <Text style={styles.erro}>{errors.celular}</Text>}
-                                    {/* USUÁRIO */}
-                                    <InputRound placeholder="Usuário*" 
-                                                    onBlur={handleBlur('user')} onChangeText={handleChange("user")}/>
-                                    {touched.user && <Text style={styles.erro}>{errors.user}</Text>}
                                     {/* SENHA */}
                                     <InputRound placeholder="Senha*"  senha 
                                                     onBlur={handleBlur('senha')} onChangeText={handleChange("senha")}/>

@@ -12,8 +12,9 @@ export interface CadastroInputProps {
     onChangeText(texto:string): void;
     onBlur?: any;
     value?:string;
-    mask?:string;
+    mask?:any;
     maxLenght?:number;
+    options?:any;
 }
 
 export function InputRound (props: CadastroInputProps) {
@@ -36,6 +37,7 @@ export function InputRound (props: CadastroInputProps) {
         {props.mask &&
             <TextInputMask
                 type={props.mask}
+                options={props.options}
                 value={props.value}
                 onBlur={props.onBlur}
                 placeholder={props.placeholder}  
@@ -44,8 +46,8 @@ export function InputRound (props: CadastroInputProps) {
                 style={styles.containerTextInput} 
                 maxLength={props.maxLenght}
             />
+            
         }
-    
       </View>
     );
 }
@@ -54,7 +56,7 @@ const styles = StyleSheet.create({
     texto: { fontSize: 10, color: 'black' },
     containerInput: {
         backgroundColor: 'rgba(255,255,255,0.3)',
-        borderRadius: 30,
+        borderRadius: 15,
         padding: 0,
         marginBottom: 10,
         height:25,

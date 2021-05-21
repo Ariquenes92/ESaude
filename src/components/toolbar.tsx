@@ -4,6 +4,8 @@ import { Header } from 'react-native-elements';
 import { MaterialIcons} from '@expo/vector-icons'
 import { DrawerActions, useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
+import firebase from 'firebase';
+import 'firebase/firestore';
 
 export interface ToolbarProps {
     titulo:string;
@@ -18,7 +20,43 @@ export function Toolbar (props: ToolbarProps) {
 
     const nav= useNavigation();
 
+    const db = firebase.firestore().collection('users');
+    
+    const pegarFoto = async () => {
+        let img
+    
+        const doc = await db.doc(firebase.auth().currentUser.uid).get();
+        const resposta = doc.data();       
+        
+        if (Platform.OS == "web"){
+            img = resposta?.imagemWeb;
+            return img
+        }
+        else{
+            img = resposta?.imagem;
+            return ("data:image/jpeg;base64,"+img)
+        }
+    }
+
     const [ imagem, setImagem ] = React.useState<string|null>(null);
+
+    const [ nomeUser, setNomeUser ] = React.useState('')
+    
+    const pegarNome = async () => {
+        let nome
+    
+        const doc = await db.doc(firebase.auth().currentUser.uid).get();
+        const resposta = doc.data();       
+        nome = resposta?.nome;
+    
+        return nome
+    }
+
+
+    nav.addListener('focus', () => {
+        pegarNome().then(nome => setNomeUser(nome))
+        pegarFoto().then(img => setImagem(img))
+    })
 
     const photo = async () =>{
         const selectPhoto = await ImagePicker.launchImageLibraryAsync({
@@ -30,12 +68,15 @@ export function Toolbar (props: ToolbarProps) {
             quality: 0.5,
         })
 
+
         if (!selectPhoto.cancelled){
             if (Platform.OS == "web"){
                 setImagem(selectPhoto.uri)
+                db.doc(firebase.auth().currentUser.uid).update({imagemWeb: selectPhoto.uri});
             }
             else{
                 setImagem("data:image/jpeg;base64,"+selectPhoto.base64)
+                db.doc(firebase.auth().currentUser.uid).update({imagem: selectPhoto.base64});
             }
         }
     }
@@ -65,19 +106,23 @@ export function Toolbar (props: ToolbarProps) {
             />
             {props.perfil && 
             <View style ={styles.perfil}>
-                <View style={{flexDirection:'row', marginRight: 20,}}>
-                    <TouchableOpacity 
+                <View style={styles.subPerfil}>
+                    <TouchableOpacity style={{marginLeft: 280}}
                         onPress = {() => photo()}>
                         {!imagem && <Image
                             source ={require('./user.png')}
-                            style={{width:30, height:30}}
+                            style={styles.imagem}
                         />}
                         {imagem && <Image
                             source = {{uri:imagem}}
-                            style={{width:30, height:30}}
+                            style={styles.imagem}
                         />}
                     </TouchableOpacity>
-                    <Text style={{color:'black', fontSize:15, marginTop:5,}}> Nome </Text>
+                    <TouchableOpacity>
+                        <View style={{justifyContent:'center'}}>
+                            <Text style={{color:'black', fontSize:15,}}>{nomeUser}</Text>
+                        </View>
+                    </TouchableOpacity>
                 </View>
             </View>}
         </View>
@@ -87,10 +132,17 @@ export function Toolbar (props: ToolbarProps) {
 const styles = StyleSheet.create({
     perfil:{
         flex:1,
-        padding: 10,
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
+        padding: 20,
         backgroundColor:'white',
     },
+    subPerfil:{
+        flexDirection:'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    imagem:{
+        width:30,
+        height:30,
+        borderRadius:15,
+    }
 })

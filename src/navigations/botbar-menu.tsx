@@ -15,7 +15,7 @@ export const BotMenuNavegator = () =>(
         }}
     >
         <Bot.Screen name="Suas Consultas" component={HomeUserScreen}/>
-        <Bot.Screen name="Buscar nova Consulta" component={NovaConsultaScreen}/>
+        <Bot.Screen name="Nova Consulta" component={NovaConsultaScreen}/>
         <Bot.Screen name="Histórico de Consultas" component={HistoricoScreen}/>
     </Bot.Navigator>
 )

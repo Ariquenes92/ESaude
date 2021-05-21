@@ -76,7 +76,7 @@ export default function NovaConsultaScreen (props:any){
             <View style={styles.mid}>
                 <View style={styles.boxMid}>
                     <View style={{justifyContent:'center', alignItems: 'center',}}>
-                        <Text style={{fontSize:20, fontWeight:'bold',}}>Buscar nova Consulta</Text>
+                        <Text style={{fontSize:20, fontWeight:'bold',}}>Nova Consulta</Text>
                     </View>
                     <Formik
                     //Dados iniciais 
@@ -162,7 +162,7 @@ export default function NovaConsultaScreen (props:any){
                                     placeholder = 'Médico'
                                     containerStyle ={styles.container}
                                     itemStyle={{ alignSelf: 'center', }}
-                                    dropDownStyle={{backgroundColor: 'white'}}
+                                    dropDownStyle={{backgroundColor: 'white', }}
                                     labelStyle={{color: '#006F9A', alignSelf:'center'}}
                                     selectedLabelStyle={{color: '#006F9A'}}
                                     
@@ -178,10 +178,10 @@ export default function NovaConsultaScreen (props:any){
                         </View>
 
                         {/*DATA*/}
-                        <View style={{alignSelf:'center', zIndex: -4, marginBottom: 5,}}>
+                        <View style={styles.data}>
                             <TextInputMask style={styles.input} placeholder="Dia" onBlur={handleBlur('data')} onChangeText={handleChange("data")}
-                                type={'custom'} options={{ mask: '99/99/9999'}} value={values.data} placeholderTextColor='#006F9A'/>
-                                {touched.data && <Text style={styles.erro}>{errors.data}</Text>}
+                                type={'custom'} options={{ mask: '99/99/9999'}} value={values.data} placeholderTextColor='#006F9A'
+                            />
                         </View>
 
                         {/*HORA*/}
@@ -192,7 +192,7 @@ export default function NovaConsultaScreen (props:any){
                                     placeholder = 'Horário'
                                     containerStyle ={styles.container}
                                     itemStyle={{ alignSelf: 'center', }}
-                                    dropDownStyle={{backgroundColor: 'white'}}
+                                    dropDownStyle={{backgroundColor: 'white', }}
                                     labelStyle={{color: '#006F9A', alignSelf:'center'}}
                                     selectedLabelStyle={{color: '#006F9A'}}
                                     
@@ -205,6 +205,7 @@ export default function NovaConsultaScreen (props:any){
                                     onChangeItem={item => setValueH(item.value)}
                                 />
                         </View>
+                        {touched.data && <Text style={styles.erro}>{errors.data}</Text>}
 
                         {/*Botão*/}
                         <View style={{alignSelf:'center', zIndex: -8}}>
@@ -251,6 +252,7 @@ const styles = StyleSheet.create({
         padding: 2,
         height: 20,
         width: 150,
+        
     },
     subtopicos:{
         fontSize: 15,
@@ -263,6 +265,16 @@ const styles = StyleSheet.create({
     erro: {
         color:"red",
         fontSize: 10,
-        textAlign: "right",
+        textAlign: "center",
     },
+    data:{
+        alignSelf:'center',
+        zIndex: -4, 
+        marginBottom: 5,
+        width: 80,
+        height: 20,
+        borderColor: 'gray',
+        borderWidth: 1,
+        borderRadius: 5,
+    }
 })

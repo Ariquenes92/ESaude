@@ -1,10 +1,11 @@
 import React from 'react';
-import { View, StyleSheet, Text, ActivityIndicator} from 'react-native';
+import { View, StyleSheet, Text, ActivityIndicator, TextInput} from 'react-native';
 import { Button } from 'react-native-elements';
 import { InputRound } from './components';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useNavigation } from '@react-navigation/native';
+import firebase from 'firebase';
 
 export interface LoginProps {}
 
@@ -19,20 +20,14 @@ export default function LoginScreen(props: LoginProps) {
     var falhaLogar = false;
     
     //Função para Logar
-    const logar = async ({user, senha} : any) =>{
-        console.log ('Entrou');
-        if (user == 'user' && senha == '123456'){
-            console.log ('Login realizado com sucesso');
-            nav.navigate('app', {user: user})
-        } if (user == 'doctor' && senha == '123456'){
-            console.log ('Login realizado com sucesso');
-            nav.navigate('homeDoctor', {user: user})
-        }
-        else {
-            falhaLogar = true;
-        }
+    const logar = async ( dados : any) =>{
+        firebase.auth().signInWithEmailAndPassword(dados.user, dados.senha)
+            .then (usuario => nav.navigate('app', usuario))
+            .catch (erro => {
+                falhaLogar = true;
+            })
     }
-
+ 
     const cadastrar = () =>{
         nav.navigate('cadastroPaciente')
     }
@@ -47,24 +42,26 @@ export default function LoginScreen(props: LoginProps) {
                 <View style={{flex:3, alignItems: 'center',}}>
 
                     <Formik
-                        initialValues={{user:'', senha:''}}
+                        initialValues={{user:'teste@teste.com.br', senha:'123456'}}
                         validationSchema={Yup.object().shape({
                             user: Yup.string().required('Informe o usuario'),
                             senha: Yup.string().required('Informe a senha').min(6, 'A senha precisa ter 6 caracteres')
                         })}
                         onSubmit={logar} >
-                        {({errors, handleChange, handleSubmit, isSubmitting, touched, handleBlur }) => (
+                        {({errors, handleChange, handleSubmit, isSubmitting, touched, handleBlur, values }) => (
                             <View>
                                 <View style={styles.box}>
 
                                     <Text style={{fontSize:20, fontWeight: 'bold'}}> Entre Agora </Text>
                                     {/* USUÁRIO */}
-                                    <InputRound placeholder="Digite o seu Usuário" iconeL="person"
-                                                    onBlur={handleBlur('user')} onChangeText={handleChange("user")}/>
+                                    <TextInput placeholder="Digite o seu Usuário"  value={values.user} autoFocus
+                                        onBlur={handleBlur('user')} onChangeText={handleChange("user")}
+                                        style={styles.input}/>
                                     {touched.user && <Text style={styles.erro}>{errors.user}</Text>}
                                     {/* SENHA */}
-                                    <InputRound placeholder="Digite sua senha" iconeL="lock" senha 
-                                                    onBlur={handleBlur('senha')} onChangeText={handleChange("senha")}/>
+                                    <TextInput placeholder="Digite sua senha" value={values.senha} secureTextEntry
+                                        onBlur={handleBlur('senha')} onChangeText={handleChange("senha")}
+                                        style={styles.input}/>
                                     {touched.senha && <Text style={styles.erro}>{errors.senha}</Text>}
                                     
                                     {falhaLogar && <Text style={styles.erroLogin}>Usuário ou Senha incorretos</Text>}
@@ -98,10 +95,7 @@ export default function LoginScreen(props: LoginProps) {
 }
     
 const styles = StyleSheet.create({
-    background: {
-        width: '100%',
-        height: '100%'
-    },
+
     container: {
         flex:1,
         padding: 10,
@@ -109,9 +103,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'stretch',
         backgroundColor:'#006F9A',
-    },
-    btnRound: {
-        borderRadius:30,
     },
     logo: {
         flex:1,
@@ -137,5 +128,11 @@ const styles = StyleSheet.create({
         borderRadius:10,
         width:250,
         height:125,
+    },
+    input:{
+        width:200,
+        height:20,
+        marginVertical: 10,
+        alignSelf: 'center'
     },
 });

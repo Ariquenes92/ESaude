@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, ImageBackground, TextInput, ActivityIndicator, ToastAndroid, Platform, TouchableHighlight } from 'react-native';
-import { Button, Input, Image } from 'react-native-elements';
+import { View, StyleSheet, Text } from 'react-native';
+import { Button, } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/core';
-import { boolean } from 'yup/lib/locale';
-import { Icon } from 'react-native-vector-icons/Icon';
 
 export interface LoginProps {}
 
@@ -12,25 +10,12 @@ export default function LoginStartScreen(props: LoginProps) {
     const nav = useNavigation()
     
     // Errors
-    const[ user, setUser ] = React.useState('')
-    const[ senha, setSenha ] = React.useState('')
     //Função para Logar
 
     var falhaLogar = false;
     var dentro = false;
 
-    const logar = async ({user, senha} : any) =>{
-        if (user == 'user' && senha == '123456'){
-            console.log ('Login realizado com sucesso');
-            nav.navigate('homeUser', {user: user})
-        } if (user == 'doctor' && senha == '123456'){
-            console.log ('Login realizado com sucesso');
-            nav.navigate('homeDoctor', {user: user})
-        }
-        else {
-            falhaLogar = true;
-        }
-    }
+    
 
     const cadastrar = () =>{
         nav.navigate('cadastroPaciente')
