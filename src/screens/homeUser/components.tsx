@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { SwipeRow } from 'react-native-swipe-list-view';
-import { Consulta } from '../../models/consulta';
 import { Button } from 'react-native-elements';
+import Consulta from '../../models/consulta';
 
 export interface ItemConsultaProps {
     consulta:Consulta
@@ -23,19 +23,13 @@ export function ItemConsulta (props: ItemConsultaProps) {
     const { consulta } = props;
 
     return (
-      <SwipeRow stopRightSwipe={-120} 
-                rightOpenValue={-120}
+      <SwipeRow stopRightSwipe={-60} 
+                rightOpenValue={-60}
                 disableRightSwipe
                 onRowPress={() => console.log('Teste')}
                 >
         {/*Oculta */}
         <View style={styles.btt}>
-            <Button 
-                containerStyle={styles.btn}
-                buttonStyle={[styles.btn, {backgroundColor:'green'} ]} 
-                onPress={() => props.onEditar(consulta)}
-                title="Editar"
-                />
             <Button 
                 containerStyle={styles.btn}
                 buttonStyle={[styles.btn, {backgroundColor:'red'} ]}
@@ -46,9 +40,9 @@ export function ItemConsulta (props: ItemConsultaProps) {
 
         {/*Visível */}
         <View style={styles.container}>
-            <Text>{consulta.doctor}</Text>
-            <Text>{consulta.speceality}</Text>
-            <Text>{consulta.date}</Text>
+            <Text>{consulta.medico}</Text>
+            <Text>{consulta.especialidade}</Text>
+            <Text>{consulta.data}</Text>
         </View>
 
       </SwipeRow>

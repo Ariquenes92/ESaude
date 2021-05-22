@@ -1,5 +1,5 @@
 export default class Consulta {
 
-    constructor (public doctor:string, public speceality:string, public date?:string, public id?: string) {}
+    constructor (public medico:string, public especialidade:string, public data?:string, public id?: string) {}
     
 }

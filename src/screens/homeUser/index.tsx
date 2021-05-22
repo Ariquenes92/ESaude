@@ -4,16 +4,36 @@ import { useNavigation, useRoute} from '@react-navigation/native';
 import { Toolbar} from '../../components/toolbar';
 import { ItemConsulta} from './components';
 import Consulta from '../../models/consulta';
+import firebase from 'firebase';
+import 'firebase/firestore';
 
 export default function HomeUserScreen (props:any){
 
     const nav = useNavigation();
     const route = useRoute();
 
+    const db = firebase.firestore().collection('users');
+    
     const [ consultas, setConsultas ] = React.useState([
         new Consulta ("Dr.João", "Cardiologista", "20/05/2021"),
         new Consulta ("Dra.Laura", "Nutricionista", "30/08/2021"),
     ])
+
+    const pegarConsultas = async () => {
+        const doc = await db.doc(firebase.auth().currentUser.uid).collection('consultas').get();
+        
+        let cons = [...consultas]
+        doc.forEach( dados => {
+            const resposta = dados.data();
+            cons = [...cons.concat(new Consulta (resposta.medico, resposta.especialidade, resposta.data))]
+        });
+        setConsultas(cons)
+    }
+
+
+    nav.addListener('focus', () => {
+        pegarConsultas().then(consulta => console.log(consulta))
+    })
 
     return (
         <View style={{flex:1}}>

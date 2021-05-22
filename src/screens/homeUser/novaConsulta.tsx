@@ -7,6 +7,8 @@ import { Button } from 'react-native-elements';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { TextInputMask } from 'react-native-masked-text';
+import firebase from 'firebase';
+import 'firebase/firestore';
 
 export interface NovaConsulta {
     data?: string;
@@ -18,21 +20,50 @@ export interface NovaConsulta {
 export default function NovaConsultaScreen (props:any){
 
     const nav = useNavigation()
-    const route = useRoute()
 
-    const confirm = (dados) =>{
-        nav.navigate('homeUser', {user: dados})
+    const confirm = (dados:any) =>{
+        adicionarConsulta(dados)
+        nav.navigate('homeUser')
     }
+
+    const db = firebase.firestore().collection('users');
+    
 
     const consulta : NovaConsulta = {};
 
+    const adicionarConsulta = async dados => {
+        const doc = await db.doc(firebase.auth().currentUser.uid).collection('consultas');
+
+        const consulta = {
+            medico: dados.medico,
+            especialidade: dados.especialidade,
+            data: dados.data
+        }
+
+        doc.add(consulta);
+    }
+
+    const pegarEspecialidade = async () =>{
+        const dbConsulta = await firebase.firestore().collection('especialidade').get();
+
+        let especialidades = [{label: 'Especialidade', value: '0', selected: true}]
+        let value = 1;
+
+        dbConsulta.forEach( dados => {
+            const resposta = dados.data();
+            
+            especialidades = [...especialidades.concat({label: resposta.especialidade, value: resposta.value, selected: false})]
+            value++
+        }); 
+        setEspecialidade(especialidades)
+    }
     const [ valueE, setValueE ] = useState(null);
+
+    nav.addListener('focus', () => {
+        pegarEspecialidade().then(esp => console.log(esp))
+    })
     
-    const [ especialidade, setEspecialidade ] = useState([
-        {label: 'Especialidade', value: '0', selected: true},
-        {label: 'Cardiologista', value: '1'},
-        {label: 'Nutricionista', value: '2'},
-    ])
+    const [ especialidade, setEspecialidade ] = useState()
 
     const [ valueM, setValueM ] = useState(null);
 
@@ -50,16 +81,6 @@ export default function NovaConsultaScreen (props:any){
     ])
     const [ medico, setMedico ] = useState([
         {label: 'Médico', value: '0'}
-    ])
-
-    const [ valueH, setValueH ] = useState(null);
-
-    const [ hora, setHora ] = useState([
-        {label: 'Horário', value: '0'},
-        {label: '8:00', value: '1'},
-        {label: '9:00', value: '2'},
-        {label: '10:00', value: '3'},
-        {label: '11:00', value: '4'},
     ])
 
     const controller = useRef(null);
@@ -183,29 +204,6 @@ export default function NovaConsultaScreen (props:any){
                                 type={'custom'} options={{ mask: '99/99/9999'}} value={values.data} placeholderTextColor='#006F9A'
                             />
                         </View>
-
-                        {/*HORA*/}
-                        <View style={{alignSelf:'center', zIndex: -4, marginBottom: 5,}}>
-                            <DropDownPicker
-                                    items={hora}
-                                    
-                                    placeholder = 'Horário'
-                                    containerStyle ={styles.container}
-                                    itemStyle={{ alignSelf: 'center', }}
-                                    dropDownStyle={{backgroundColor: 'white', }}
-                                    labelStyle={{color: '#006F9A', alignSelf:'center'}}
-                                    selectedLabelStyle={{color: '#006F9A'}}
-                                    
-                                    onChangeList={(hora, callback) => {
-                                        Promise.resolve(setHora(hora))
-                                        .then(() => callback());
-                                    }}
-                                    controller={instance => controller.current = instance}
-                                    defaultValue={valueH}
-                                    onChangeItem={item => setValueH(item.value)}
-                                />
-                        </View>
-                        {touched.data && <Text style={styles.erro}>{errors.data}</Text>}
 
                         {/*Botão*/}
                         <View style={{alignSelf:'center', zIndex: -8}}>
