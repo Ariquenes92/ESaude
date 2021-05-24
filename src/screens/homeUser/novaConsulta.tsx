@@ -12,7 +12,6 @@ import 'firebase/firestore';
 
 export interface NovaConsulta {
     data?: string;
-    hora?: string;
     especialidade?: string;
     medico?: string;
 }
@@ -23,7 +22,6 @@ export default function NovaConsultaScreen (props:any){
 
     const confirm = (dados:any) =>{
         adicionarConsulta(dados)
-        nav.navigate('homeUser')
     }
 
     const db = firebase.firestore().collection('users');
@@ -31,68 +29,95 @@ export default function NovaConsultaScreen (props:any){
 
     const consulta : NovaConsulta = {};
 
-    const adicionarConsulta = async dados => {
+    const adicionarConsulta = async (dados : any) => {
         const doc = await db.doc(firebase.auth().currentUser.uid).collection('consultas');
 
+        let nomeMedico
+        let nomeEspecialista
+        medico.forEach(res => {
+            if (res.value == valueM){
+                nomeMedico = res.label
+            }
+        })
+
+        especialidade.forEach(res => {
+            if (res.value == valueE){
+                nomeEspecialista = res.label
+            }
+        });
         const consulta = {
-            medico: dados.medico,
-            especialidade: dados.especialidade,
+            medico: nomeMedico,
+            especialidade: nomeEspecialista,
             data: dados.data
         }
 
-        doc.add(consulta);
+        doc.doc().set(consulta)
+        resetarCampos()
+        nav.navigate('Suas Consultas')
+    }
+
+    const resetarCampos = () =>{
+        setEspecialidade([{label: 'Especialidade', value: '0', selected: true}])
+        setMedico([{label: 'Médico', value: '0', selected: true}])
     }
 
     const pegarEspecialidade = async () =>{
         const dbConsulta = await firebase.firestore().collection('especialidade').get();
 
         let especialidades = [{label: 'Especialidade', value: '0', selected: true}]
-        let value = 1;
 
         dbConsulta.forEach( dados => {
             const resposta = dados.data();
             
-            especialidades = [...especialidades.concat({label: resposta.especialidade, value: resposta.value, selected: false})]
-            value++
+            especialidades = [...especialidades.concat({label: resposta.especialidade, value: resposta.valor, selected: false})]
         }); 
         setEspecialidade(especialidades)
     }
-    const [ valueE, setValueE ] = useState(null);
+
+    const pegarMedico = async ( value :any) =>{
+        const dbEspecialista = await firebase.firestore().collection('especialidade')
+        
+        let medicos = [{label: 'Médico', value: '0', selected: true}]
+        
+        dbEspecialista.where('valor', '==', value).get()
+            .then( resultados => {
+                resultados.forEach(res => {
+
+                    dbEspecialista.doc(res.data().id).collection('medicos').get()
+                        .then( dados => {
+                            dados.forEach( resp => {
+                                medicos = [...medicos.concat({label: resp.data().medico, value: resp.data().valor, selected: false})]
+                                setMedico(medicos)
+                            })
+                        })
+                    });
+                })
+        if ( value == '0'){
+            setMedico(medicos)
+        }
+    }
+            
+
+    const [ valueE, setValueE ] = useState('0');
 
     nav.addListener('focus', () => {
-        pegarEspecialidade().then(esp => console.log(esp))
+        pegarEspecialidade()
+        pegarMedico('0')
     })
     
     const [ especialidade, setEspecialidade ] = useState()
 
-    const [ valueM, setValueM ] = useState(null);
+    const [ valueM, setValueM ] = useState('0');
 
-    const [ medico1, setMedico1 ] = useState([
-        {label: 'Médico', value: '0'},
-        {label: 'João', value: '1'},
-        {label: 'Carlos', value: '2'},
-        {label: 'Carla', value: '3'},
-    ])
-    const [ medico2, setMedico2 ] = useState([
-        {label: 'Médico', value: '0'},
-        {label: 'Maria', value: '1'},
-        {label: 'Pedro', value: '2'},
-        {label: 'Laura', value: '3'},
-    ])
-    const [ medico, setMedico ] = useState([
-        {label: 'Médico', value: '0'}
-    ])
+    const [ medico, setMedico ] = useState()
 
     const controller = useRef(null);
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0)
 
     return  (
         <View style={{flex:1}}>
             {/* CABEÇALHO*/}
             <Toolbar titulo="Perfil" menu perfil/>
-
             {/*MEIO*/}
             <View style={styles.mid}>
                 <View style={styles.boxMid}>
@@ -104,7 +129,9 @@ export default function NovaConsultaScreen (props:any){
                     initialValues={consulta}
                     // Validação de formulário
                     validationSchema={Yup.object().shape({
-                        data: Yup.date().required('Informe uma data válida').min(today, 'A data não pode ser no passado'),
+                        especialidade: Yup.string(),
+                        medico: Yup.string(),
+                        data: Yup.string().required('Informe uma data válida'),
                     })}
                     //Envio
                     onSubmit={confirm}
@@ -113,96 +140,54 @@ export default function NovaConsultaScreen (props:any){
                     <View style={{flex:1}}>
                         {/*ESPECIALIDADE*/}
                         <View style={{alignSelf:'center', marginBottom: 5,}}>
-                        <DropDownPicker
-                            
-                            items={especialidade}
-                            
-                            placeholder = 'Especialidade'
-                            containerStyle ={styles.container}
-                            itemStyle={{ alignSelf: 'center', }}
-                            dropDownStyle={{backgroundColor: 'white'}}
-                            labelStyle={{color: '#006F9A', alignSelf:'center'}}
-                            selectedLabelStyle={{color: '#006F9A'}}
-                            
-                            onChangeList={(especialidade, callback) => {
-                                Promise.resolve(setEspecialidade(especialidade))
-                                .then(() => callback());
-                            }}
-                            controller={instance => controller.current = instance}
-                            defaultValue={valueE}
-                            onChangeItem={item => setValueE(item.value)}
+                            <DropDownPicker
+                                items={especialidade}
+                                
+                                placeholder = 'Especialidade'
+                                containerStyle ={styles.container}
+                                itemStyle={{ alignSelf: 'center', }}
+                                dropDownStyle={{backgroundColor: 'white'}}
+                                labelStyle={{color: '#006F9A', alignSelf:'center'}}
+                                selectedLabelStyle={{color: '#006F9A'}}
+                                
+                                onChangeList={(especialidade, callback) => {
+                                    Promise.resolve(setEspecialidade(especialidade))
+                                    .then(() => callback());
+                                }}
+                                controller={instance => controller.current = instance}
+                                defaultValue={valueE}
+                                onChangeItem={item => {setValueE(item.value); pegarMedico(item.value)}}
                             />
                         </View>
 
                         {/*MÉDICO*/}
                         <View style={{alignSelf:'center', zIndex: -2, marginBottom: 5,}}>
-                            {(valueE ==  1) &&
-                                <DropDownPicker
-                                    items={medico1}
-                                    
-                                    placeholder = 'Médico'
-                                    containerStyle ={styles.container}
-                                    itemStyle={{ alignSelf: 'center', }}
-                                    dropDownStyle={{backgroundColor: 'white'}}
-                                    labelStyle={{color: '#006F9A', alignSelf:'center'}}
-                                    selectedLabelStyle={{color: '#006F9A'}}
-                                    
-                                    onChangeList={(medico1, callback) => {
-                                        Promise.resolve(setMedico1(medico1))
-                                        .then(() => callback());
-                                    }}
-                                    controller={instance => controller.current = instance}
-                                    defaultValue={valueM}
-                                    onChangeItem={item => setValueM(item.value)}
-                                />
-                            }
-                            {(valueE == 2) &&
-                                <DropDownPicker
-                                    items={medico2}
-                                    
-                                    placeholder = 'Médico'
-                                    containerStyle ={styles.container}
-                                    itemStyle={{ alignSelf: 'center', }}
-                                    dropDownStyle={{backgroundColor: 'white'}}
-                                    labelStyle={{color: '#006F9A', alignSelf:'center'}}
-                                    selectedLabelStyle={{color: '#006F9A'}}
-                                    
-                                    onChangeList={(medico2, callback) => {
-                                        Promise.resolve(setMedico2(medico2))
-                                        .then(() => callback());
-                                    }}
-                                    controller={instance => controller.current = instance}
-                                    defaultValue={valueM}
-                                    onChangeItem={item => setValueM(item.value)}
-                                />
-                            }
-                            {(valueE == null || valueE == 0) &&
-                                <DropDownPicker
-                                    items={medico}
-                                    
-                                    placeholder = 'Médico'
-                                    containerStyle ={styles.container}
-                                    itemStyle={{ alignSelf: 'center', }}
-                                    dropDownStyle={{backgroundColor: 'white', }}
-                                    labelStyle={{color: '#006F9A', alignSelf:'center'}}
-                                    selectedLabelStyle={{color: '#006F9A'}}
-                                    
-                                    onChangeList={(medico, callback) => {
-                                        Promise.resolve(setMedico(medico))
-                                        .then(() => callback());
-                                    }}
-                                    controller={instance => controller.current = instance}
-                                    defaultValue={valueM}
-                                    onChangeItem={item => setValueM(item.value)}
-                                />
-                            }
+                            <DropDownPicker
+                                items={medico}
+                                
+                                placeholder = 'Médico'
+                                containerStyle ={styles.container}
+                                itemStyle={{ alignSelf: 'center', }}
+                                dropDownStyle={{backgroundColor: 'white', }}
+                                labelStyle={{color: '#006F9A', alignSelf:'center'}}
+                                selectedLabelStyle={{color: '#006F9A'}}
+                                
+                                onChangeList={(medico, callback) => {
+                                    Promise.resolve(setMedico(medico))
+                                    .then(() => callback());
+                                }}
+                                controller={instance => controller.current = instance}
+                                defaultValue={valueM}
+                                onChangeItem={item => setValueM(item.value)}
+                            />
                         </View>
 
                         {/*DATA*/}
                         <View style={styles.data}>
                             <TextInputMask style={styles.input} placeholder="Dia" onBlur={handleBlur('data')} onChangeText={handleChange("data")}
-                                type={'custom'} options={{ mask: '99/99/9999'}} value={values.data} placeholderTextColor='#006F9A'
+                                type={'datetime'} options={{ format: 'DD/MM/YYYY'}} value={values.data} placeholderTextColor='#006F9A'
                             />
+                            {touched.data && <Text style={styles.erro}>{errors.data}</Text>}
                         </View>
 
                         {/*Botão*/}

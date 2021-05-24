@@ -14,25 +14,28 @@ export default function HomeUserScreen (props:any){
 
     const db = firebase.firestore().collection('users');
     
-    const [ consultas, setConsultas ] = React.useState([
-        new Consulta ("Dr.João", "Cardiologista", "20/05/2021"),
-        new Consulta ("Dra.Laura", "Nutricionista", "30/08/2021"),
-    ])
+    const [ consultas, setConsultas ] = React.useState([])
 
     const pegarConsultas = async () => {
-        const doc = await db.doc(firebase.auth().currentUser.uid).collection('consultas').get();
+        const doc = await db.doc(firebase.auth().currentUser.uid).collection('consultas').orderBy('data').get();
         
-        let cons = [...consultas]
+        let cons = []
         doc.forEach( dados => {
             const resposta = dados.data();
-            cons = [...cons.concat(new Consulta (resposta.medico, resposta.especialidade, resposta.data))]
+            const idConsulta = dados.id
+            cons = [...cons.concat(new Consulta (resposta.medico, resposta.especialidade, resposta.data, idConsulta))]
         });
         setConsultas(cons)
     }
 
+    const deletarConsulta = async (id) =>{
+        const doc = await db.doc(firebase.auth().currentUser.uid).collection('consultas').doc(id);
+        doc.delete()
+        pegarConsultas()
+    }
 
     nav.addListener('focus', () => {
-        pegarConsultas().then(consulta => console.log(consulta))
+        pegarConsultas()
     })
 
     return (
@@ -58,8 +61,7 @@ export default function HomeUserScreen (props:any){
                         renderItem={({item}) => (
                             <ItemConsulta
                                 consulta={item}
-                                onEditar={(consulta) => console.log(consulta)}
-                                onExcluir={(id) => console.log(id)}
+                                onExcluir={(id) => deletarConsulta(id)}
                             />
                         )}
                     />

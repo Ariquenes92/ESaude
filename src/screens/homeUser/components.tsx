@@ -6,14 +6,11 @@ import Consulta from '../../models/consulta';
 
 export interface ItemConsultaProps {
     consulta:Consulta
-
-    onEditar(consulta: Consulta): void;
     onExcluir(id?:string): void;
 }
 
 export interface HistoricoConsultaProps {
     consulta:Consulta
-
     onDetalhar(consulta: Consulta): void;
     onRepetir(id?:string): void;
 }
@@ -26,7 +23,7 @@ export function ItemConsulta (props: ItemConsultaProps) {
       <SwipeRow stopRightSwipe={-60} 
                 rightOpenValue={-60}
                 disableRightSwipe
-                onRowPress={() => console.log('Teste')}
+                onRowPress={() => console.log('Clicou')}
                 >
         {/*Oculta */}
         <View style={styles.btt}>
@@ -78,9 +75,9 @@ export function HistoricoConsulta (props: HistoricoConsultaProps) {
 
         {/*Visível */}
         <View style={styles.container}>
-            <Text>{consulta.doctor}</Text>
-            <Text>{consulta.speceality}</Text>
-            <Text>{consulta.date}</Text>
+            <Text>{consulta.medico}</Text>
+            <Text>{consulta.especialidade}</Text>
+            <Text>{consulta.data}</Text>
         </View>
 
       </SwipeRow>
