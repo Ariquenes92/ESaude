@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {} from 'react';
 import { createDrawerNavigator, DrawerItemList } from '@react-navigation/drawer'
 import { MaterialIcons} from '@expo/vector-icons'
 import { BotMenuNavegator } from './botbar-menu';
@@ -9,7 +9,8 @@ import firebase from 'firebase';
 
 const Drawer = createDrawerNavigator();
 
-export const DrawerMenu = () => (
+export const DrawerMenu = () => {
+    return(
     <Drawer.Navigator drawerPosition="right" drawerContent = {(props) => (
         <View>
             <DrawerItemList {...props} />
@@ -38,4 +39,5 @@ export const DrawerMenu = () => (
                         drawerIcon: () => <MaterialIcons name="format-list-bulleted" size ={20}/>}}
         />
     </Drawer.Navigator>
-)
+    )
+}

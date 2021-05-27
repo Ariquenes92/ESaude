@@ -34,7 +34,11 @@ export default function CadastroPacienteScreen(props: CadastroInputProps) {
                     email: dados.email,
                     cpf: dados.cpf,
                     nascimento: dados.nascimento,
-                    celular: dados.celular
+                    celular: dados.celular,
+                    notiDia: 1,
+                    notiDiaAnt: 1,
+                    tiposDeNot: 1,
+                    enviarEmail: 1,
                 }
                 firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).set(dadosUser)
                 nav.navigate('app', {usuario: dados.user})

@@ -1,6 +1,6 @@
-import React, { useState, Component, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { useNavigation, useRoute} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { Toolbar} from '../../components/toolbar';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Button } from 'react-native-elements';

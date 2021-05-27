@@ -26,7 +26,7 @@ export function Toolbar (props: ToolbarProps) {
         let img
     
         const doc = await db.doc(firebase.auth().currentUser.uid).get();
-        const resposta = doc.data();       
+        const resposta = doc.data();
         
         if (Platform.OS == "web"){
             img = resposta?.imagemWeb;
@@ -107,7 +107,7 @@ export function Toolbar (props: ToolbarProps) {
             {props.perfil && 
             <View style ={styles.perfil}>
                 <View style={styles.subPerfil}>
-                    <TouchableOpacity style={{marginLeft: 280}}
+                    <TouchableOpacity style={{}}
                         onPress = {() => photo()}>
                         {!imagem && <Image
                             source ={require('./user.png')}
