@@ -1,12 +1,13 @@
-import * as React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput, ActivityIndicator } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { Button} from 'react-native-elements';
 import { Formik } from 'formik';
-import * as Yup from 'yup';
-import { useNavigation, useRoute, DrawerActions} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { Toolbar} from '../../components/toolbar';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { TextInputMask } from 'react-native-masked-text';
+import firebase from 'firebase';
+import 'firebase/firestore';
 
 /** Interface que define os atributos basicos de usuário */
 export interface UsuarioInfo {
@@ -16,49 +17,124 @@ export interface UsuarioInfo {
 
 export default function PageInformationAdd (props:any){
 
-    const state ={
-        genero: 'Gênero',
-    }
+    const nav = useNavigation()
+    const db = firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid);
 
     const confirm = (dados) =>{
-        nav.navigate('homeUser', {user: dados})
-    }   
+        const infoAdd = {
+            genero: valueG,
+            bebe: valueB,
+            fuma: valueF,
+            exercicio: valueE,
+            altura: dados.altura,
+            peso: dados.peso,
+        }
+
+        db.update(infoAdd)
+            .then( () => {
+                nav.navigate('homeUser')
+            })
+            .catch( () => {
+                setErro('Ocorreu um erro Inesperado')
+            })
+    }
+
+
+    const pegarDados = async () => {
+        const doc = await db.get();
+
+        const dados = doc.data()
+
+        const valor = dados.genero
+        setValueG(valor)
+
+        const valor2 = dados.bebe
+        setValueB(valor2)
+
+        const valor3 = dados.fuma
+        setValueF(valor3)
+
+        const valor4 = dados.exercicio
+        setValueE(valor4)
+
+        const info = {
+            altura: dados.altura,
+            peso: dados.peso
+        }
+        setInf(info)
+    }
+
+    nav.addListener('focus', () => {
+        pegarDados()
+    })
+
+    const [ genero , setGenero ] = useState([
+        {label: 'Gênero', value: '0'},
+        {label: 'Masculino', value: '1'},
+        {label: 'Feminino', value: '2'},
+    ])
+    const [ bebe, setBebe ] = useState([
+        {label: 'Bebe', value: '0'},
+        {label: 'Sim', value: '1'},
+        {label: 'Não', value: '2'},
+    ])
+    const [ fuma, setFuma ] = useState([
+        {label: 'Fuma', value: '0'},
+        {label: 'Sim', value: '1'},
+        {label: 'Não', value: '2'},
+    ])
+    const [ exercicio, setExercicio ] = useState([
+        {label: 'Exercício', value: '0'},
+        {label: 'Sim', value: '1'},
+        {label: 'Não', value: '2'},
+    ])
+
+    const [ valueG, setValueG ] = useState();
+    const [ valueB, setValueB ] = useState();
+    const [ valueF, setValueF ] = useState();
+    const [ valueE, setValueE ] = useState();
+    const [ inf, setInf ] = useState({
+        altura: '',
+        peso: '',
+    })
 
     const [erro, setErro] = React.useState<string|null>(null);
-    const nav = useNavigation()
 
+    const controller = useRef(null);
     //Botão pra mostrar senha
-    const usuario : UsuarioInfo = {};
     return(
         <View style={{flex:1}}>
             <Toolbar titulo="Informações Adicionais" back/>
             <View style={{alignItems:'center'}}>
-                <Formik
+                <Formik enableReinitialize
                     //Dados iniciais 
-                    initialValues={usuario}
+                    initialValues={{ altura:inf.altura, peso:inf.peso}}
                     // Validação de formulário
                     
                     //Envio
                     onSubmit={confirm}
                 >
-                 {({errors, handleBlur, handleChange, handleSubmit, touched, isSubmitting, values}) => (
+                 {({errors, handleBlur, handleChange, handleSubmit, touched, values}) => (
                     <View style={{flex:1}}>
                         <Text style={styles.titulo}> Informações Pessoais </Text>
 
                         {/* GÊNERO */}
                         <View style={{ alignItems: 'center',}}>
                             <DropDownPicker
-                                items={[
-                                    {label: 'Gênero', value: '0'},
-                                    {label: 'Masculino', value: '1'},
-                                    {label: 'Feminino', value: '2'},
-                                ]}
-                                placeholder = 'Gênero'
+                                items={genero}
+                                placeholder = {(valueG == '1') ? 'Masculino' : (valueG == '2') ? 'Feminino' : 'Gênero'}
                                 containerStyle ={styles.container}
                                 itemStyle={{ justifyContent: 'center', }}
                                 dropDownStyle={{backgroundColor: 'white'}}
                                 labelStyle={{color: '#006F9A'}}
                                 selectedLabelStyle={{color: '#006F9A'}}
+
+                                onChangeList={(genero, callback) => {
+                                    Promise.resolve(setGenero(genero))
+                                    .then(() => callback());
+                                }}
+                                controller={instance => controller.current = instance}
+                                onChangeItem={item => {setValueG(item.value)}}
                             />
                         </View>
 
@@ -81,61 +157,69 @@ export default function PageInformationAdd (props:any){
                         {/* BEBE */}
                         <View style={{ alignItems: 'center',  zIndex: -4,}}>
                             <DropDownPicker
-                                items={[
-                                    {label: 'Bebe', value: '0'},
-                                    {label: 'Sim', value: '1'},
-                                    {label: 'Não', value: '2'},
-                                ]}
-                                placeholder = 'Bebe'
+                                items={bebe}
+                                placeholder = {(valueB == '1') ? 'Sim' : (valueB == '2') ? 'Não' : 'Bebe'}
                                 containerStyle ={styles.container}
                                 itemStyle={{ justifyContent: 'center', }}
                                 dropDownStyle={{backgroundColor: 'white'}}
                                 labelStyle={{color: '#006F9A'}}
                                 selectedLabelStyle={{color: '#006F9A'}}
+
+                                onChangeList={(bebe, callback) => {
+                                    Promise.resolve(setBebe(bebe))
+                                    .then(() => callback());
+                                }}
+                                controller={instance => controller.current = instance}
+                                onChangeItem={item => {setValueB(item.value)}}
                             />
                         </View>
 
                         {/* FUMA */}
                         <View style={{ alignItems: 'center',  zIndex: -6,}}>
                             <DropDownPicker
-                                items={[
-                                    {label: 'Fuma', value: '0'},
-                                    {label: 'Sim', value: '1'},
-                                    {label: 'Não', value: '2'},
-                                ]}
-                                placeholder = 'Fuma'
+                                items={fuma}
+                                placeholder = {(valueF == '1') ? 'Sim' : (valueF == '2') ? 'Não' : 'Fuma'}
                                 containerStyle ={styles.container}
                                 itemStyle={{ justifyContent: 'center', }}
                                 dropDownStyle={{backgroundColor: 'white'}}
                                 labelStyle={{color: '#006F9A'}}
                                 selectedLabelStyle={{color: '#006F9A'}}
+
+                                onChangeList={(fuma, callback) => {
+                                    Promise.resolve(setFuma(fuma))
+                                    .then(() => callback());
+                                }}
+                                controller={instance => controller.current = instance}
+                                onChangeItem={item => {setValueF(item.value)}}
                             />
                         </View>
 
                         {/* ATIVIDADE FISICA */}
                         <View style={{ alignItems: 'center',  zIndex: -8,}}>
                             <DropDownPicker
-                                items={[
-                                    {label: 'Exercício', value: '0'},
-                                    {label: 'Sim', value: '1'},
-                                    {label: 'Não', value: '2'},
-                                ]}
-                                placeholder = 'Exercício'
+                                items={exercicio}
+                                placeholder = {(valueE == '1') ? 'Sim' : (valueE == '2') ? 'Não' : 'Exercício'}
                                 containerStyle ={styles.container}
                                 itemStyle={{ justifyContent: 'center', }}
                                 dropDownStyle={{backgroundColor: 'white'}}
                                 labelStyle={{color: '#006F9A'}}
                                 selectedLabelStyle={{color: '#006F9A'}}
+
+                                onChangeList={(exercicio, callback) => {
+                                    Promise.resolve(setExercicio(exercicio))
+                                    .then(() => callback());
+                                }}
+                                controller={instance => controller.current = instance}
+                                onChangeItem={item => {setValueE(item.value)}}
                             />
                         </View>
                         
                         {/* Botão */}
                         <View style={styles.botao}>
                             { erro && <Text style={styles.erro}>{erro}</Text>}
-                            { isSubmitting && <ActivityIndicator size={30} color='#006F9A'/>}
-                            { !isSubmitting && <Button title="Confirmar" onPress={() => handleSubmit()} buttonStyle={{height:20, backgroundColor: '#006F9A'}}
+                            <Button title="Confirmar" onPress={() => handleSubmit()} buttonStyle={{height:20, backgroundColor: '#006F9A'}}
                                 containerStyle={{width:100, marginTop:10}} titleStyle={{color:'white', fontSize:15}}
-                                raised={true} type="outline" />}
+                                raised={true} type="outline" />
                             <Button title="Cancelar" buttonStyle={{height:20, backgroundColor: 'red',}}
                                 containerStyle={{width:100, marginTop:10, marginLeft:10}} titleStyle={{color:'white', fontSize:15}}
                                 raised={true} type="outline" 
