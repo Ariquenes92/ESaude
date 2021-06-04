@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, Text, ActivityIndicator, TextInput} from 'react-native';
 import { Button } from 'react-native-elements';
-import { InputRound } from './components';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useNavigation } from '@react-navigation/native';

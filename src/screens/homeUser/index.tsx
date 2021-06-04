@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Platform } from 'react-native';
 import { useNavigation, useRoute} from '@react-navigation/native';
 import { Toolbar} from '../../components/toolbar';
 import { ItemConsulta} from './components';
 import Consulta from '../../models/consulta';
 import firebase from 'firebase';
 import 'firebase/firestore';
+import { AdMobBanner } from 'expo-ads-admob';
 
 export default function HomeUserScreen (props:any){
 
@@ -45,6 +46,10 @@ export default function HomeUserScreen (props:any){
 
             {/*MEIO*/}
             <View style={styles.mid}>
+                {(Platform.OS == 'android') && <AdMobBanner
+                    adUnitID="ca-app-pub-3940256099942544/6300978111"
+                    bannerSize="smartBannerPortrait"
+                />}
                 <View style={styles.boxMid}>
                     <View style={{justifyContent:'center', alignItems: 'center',}}>
                         <Text style={{fontSize:20, fontWeight:'bold',}}>Suas Consultas</Text>
