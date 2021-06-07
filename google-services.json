@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1003651010420",
+    "project_id": "e-saude-83bfb",
+    "storage_bucket": "e-saude-83bfb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1003651010420:android:fe9083711f5534a67aa621",
+        "android_client_info": {
+          "package_name": "br.edu.esaude.cesmac"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1003651010420-j3k3qnhnk9m4m97p1jsbadgibb2phl6i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAe-uq3_0OOQ-mN2ZxJHxeu_xBaTXbY7oc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1003651010420-j3k3qnhnk9m4m97p1jsbadgibb2phl6i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

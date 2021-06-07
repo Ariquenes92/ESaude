@@ -26,7 +26,10 @@
       },
       "config":{
         "googleMobileAdsAppId": "ca-app-pub-2452206300297365~2773137182"
-      }
+      },
+      "package": "br.edu.esaude.cesmac",
+      "versionCode": 1,
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png"
